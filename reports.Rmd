@@ -10,10 +10,28 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Reports
 
-- Angola
-- Benin
-- [Burundi](files/BUHR61_netfile.dta.pdf)
-- Burkina Faso
-- Cameroon
+- [Angola](files/Angola_Textile_Report.html)
+- [Benin](files/Benin_Textile_Report.html)
+- [Burkina Faso]("files/Burkina Faso_Textile_Report.html")
+- [Burundi](files/Burundi_Textile_Report.html)
+- [Cameroon](files/Cameroon_Textile_Report.html)
+- [Chad](files/Chad_Textile_Report.html)
+- [DRC](files/DRC_Textile_Report.html)
+- [Gambia](files/Gambia_Textile_Report.html)
+- [Ghana](files/Ghana_Textile_Report.html)
+- [Guinea](files/Guinea_Textile_Report.html)
 - [Kenya](files/Kenya_Textile_Report.html)
-- Tanzania
+- [Liberia](files/Liberia_Textile_Report.html)
+- [Madagascar](files/Madagascar_Textile_Report.html)
+- [Malawi](files/Malawi_Textile_Report.html)
+- [Mali](files/Mali_Textile_Report.html)
+- [Mozambique](files/Mozambique_Textile_Report.html)
+- [Nigeria](files/Nigeria_Textile_Report.html)
+- [Rwanda](files/Rwanda_Textile_Report.html)
+- [Senegal](files/Senegal_Textile_Report.html)
+- [Tanzania](files/Tanzania_Textile_Report.html)
+- [Togo](files/Togo_Textile_Report.html)
+- [Uganda](files/Uganda_Textile_Report.html)
+- [Zambia](files/Zambia_Textile_Report.html)
+- [Zimbabwe](files/Zimbabwe_Textile_Report.html)
+- [Test](files/06_Test_Trans_Web.html)
