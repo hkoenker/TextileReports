@@ -3,26 +3,25 @@
     {
       "path": "about.html",
       "title": "About this site",
-      "description": "Some additional details about the website",
       "author": [],
-      "contents": "\nThis website was built by Hannah Koenker, Technical Director at Tropical Health. Both Stata and R were used for analysis and presentation of the findings. This website uses Distill.\n\n\n\n",
-      "last_modified": "2021-12-17T14:59:54-05:00"
+      "contents": "\ntitle: “About this site” description: |\nThis site was built by Hannah Koenker, Technical Director at Tropical Health. Both Stata and R were used for analysis and presentation of the findings.\n\n\n\n",
+      "last_modified": "2021-12-17T15:59:41-05:00"
     },
     {
       "path": "index.html",
-      "title": "Textile Reports",
-      "description": "Does net textile affect net use?\n",
+      "title": "ITN Textile vs ITN Use",
+      "description": "Does the textile of an ITN make a difference in the overall use rate?\n",
       "author": [],
-      "contents": "\nThis website provides reports for countries in sub-Saharan Africa to evaluate whether there are differences in use of insecticide-treated nets (ITNs) due to the textile of ITNs (i.e. polyester or polyethylene).\n\n\n\n",
-      "last_modified": "2021-12-17T14:59:55-05:00"
+      "contents": "\nThis website provides reports for countries in sub-Saharan Africa to evaluate whether there are differences in use of insecticide-treated nets (ITNs) due to the textile of ITNs (i.e. polyester or polyethylene).\nSome countries may wish to procure ITNs of a particular textile. These reports use large household survey data to evaluate whether there are differences in use between polyester and polyethylene nets in a particular country, and whether net textile is associated with these differences after controlling for other determinants of net use.\nThese reports walk through several key questions to ask as we consider this question and provide recommendations for next steps.\nThis work is supported by the Alliance for Malaria Prevention with funding from The Bill & Melinda Gates Foundation.\n\n\n\n",
+      "last_modified": "2021-12-17T15:59:42-05:00"
     },
     {
       "path": "reports.html",
       "title": "Reports",
-      "description": "Available Reports",
+      "description": "Reports are limited to the most recent Malaria Indicator Survey or Demographic and Health Survey for each country. We are working on making these available in both French and English.",
       "author": [],
-      "contents": "\nReports\nAngola\nBenin\nBurundi\nBurkina Faso\nCameroon\nTanzania\n\n\n\n",
-      "last_modified": "2021-12-17T14:59:55-05:00"
+      "contents": "\nReports\nAngola\nBenin\nBurundi\nBurkina Faso\nCameroon\nKenya\nTanzania\n\n\n\n",
+      "last_modified": "2021-12-17T15:59:42-05:00"
     }
   ],
   "collections": []
