@@ -1,0 +1,14 @@
+name: "TextileReports"
+title: "Textile Reports"
+description: |
+  Textile Reports
+output_dir: "docs"
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "About"
+      href: about.html
+    - text: "Reports"
+      href: reports.html
+output: distill::distill_article
