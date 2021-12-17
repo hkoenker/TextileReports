@@ -1,5 +1,6 @@
 name: "TextileReports"
 title: "Textile Reports"
+theme: bespoke-theme.css
 description: |
   Textile Reports
 output_dir: "docs"

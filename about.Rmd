@@ -1,11 +1,11 @@
 ---
 title: "About this site"
 description: |
-  Some additional details about the website
+  
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-This website was built by Hannah Koenker, Technical Director at Tropical Health. Both Stata and R were used for analysis and presentation of the findings. This website uses Distill.
+This site was built by Hannah Koenker, Technical Director at Tropical Health. Both Stata and R were used for analysis and presentation of the findings. 
