@@ -12,7 +12,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 - Angola
 - Benin
-- Burundi
+- [Burundi](files/BUHR61_netfile.dta.pdf)
 - Burkina Faso
 - Cameroon
+- [Kenya](files/Kenya_Textile_Report.html)
 - Tanzania
