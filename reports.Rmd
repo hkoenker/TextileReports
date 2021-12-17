@@ -13,3 +13,6 @@ knitr::opts_chunk$set(echo = FALSE)
 - Angola
 - Benin
 - Burundi
+- Burkina Faso
+- Cameroon
+- Tanzania
