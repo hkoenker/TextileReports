@@ -1,7 +1,7 @@
 ---
 title: "Reports"
 description: |
-  Available Reports
+  Reports are limited to the most recent Malaria Indicator Survey or Demographic and Health Survey for each country. We are working on making these available in both French and English.
 ---
 
 ```{r setup, include=FALSE}
