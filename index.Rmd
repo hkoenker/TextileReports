@@ -1,7 +1,7 @@
 ---
-title: "Textile Reports"
+title: "ITN Textile vs ITN Use"
 description: |
-  Does net textile affect net use?
+  Does the textile of an ITN make a difference in the overall use rate?
 site: distill::distill_website
 ---
 
@@ -10,3 +10,9 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 This website provides reports for countries in sub-Saharan Africa to evaluate whether there are differences in use of insecticide-treated nets (ITNs) due to the textile of ITNs (i.e. polyester or polyethylene).
+
+Some countries may wish to procure ITNs of a particular textile. These reports use large household survey data to evaluate whether there are differences in use between polyester and polyethylene nets in a particular country, and whether net textile is associated with these differences after controlling for other determinants of net use.
+
+These reports walk through several key questions to ask as we consider this question and provide recommendations for next steps.
+
+This work is supported by the Alliance for Malaria Prevention with funding from The Bill & Melinda Gates Foundation.
