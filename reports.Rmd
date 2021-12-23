@@ -1,7 +1,7 @@
 ---
 title: "Reports"
 description: |
-  Reports are limited to the most recent Malaria Indicator Survey or Demographic and Health Survey for each country. We are working on making these available in both French and English.
+  Reports are limited to the most recent Malaria Indicator Survey or Demographic and Health Survey for each country. They are available in English and in French.
 ---
 
 ```{r setup, include=FALSE}
@@ -34,4 +34,4 @@ knitr::opts_chunk$set(echo = FALSE)
 - [Uganda](files/Uganda_Textile_Report.html)
 - [Zambia](files/Zambia_Textile_Report.html)
 - [Zimbabwe](files/Zimbabwe_Textile_Report.html)
-- [Test](files/06_Test_Trans_Web.html)
+
