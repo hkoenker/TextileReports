@@ -1,7 +1,7 @@
 ---
 title: "ITN Textile vs ITN Use"
 description: |
-  Does the textile of an ITN make a difference in the overall use rate?
+  Does the textile of an ITN make a difference in the overall use rate? <br>  Last update: `r format(Sys.time(), '%d %B, %Y')`
 site: distill::distill_website
 editor_options: 
   chunk_output_type: console
@@ -47,7 +47,8 @@ df <- read_excel("/Users/hannahkoenker/Dropbox/A DHS MIS Datasets/Analysis/Texti
            country == "CAR" ~ "Central African Republic",
            TRUE ~ as.character(country)
          ),
-         diff = cut(diffuse,breaks=c(0,5,10,15,Inf)),
+         diff = if_else(p_value>0.05,-1,diffuse),
+         diff = cut(diff,breaks=c(-2,0,5,10,15,Inf)),
          name = country)
 ```
 
@@ -67,26 +68,23 @@ crs_africa <-  st_crs(africa)
 
 ``` {r map_5ptsdiff}
 m5pt <- ggplot(africa) +
-  geom_sf(data = africa, aes(fill = factor(diff),
-                             color = factor(p_0_05))) +
+  geom_sf(data = africa, aes(fill = factor(diff)),
+          color = "lightgrey") +
   coord_sf(crs = st_crs(africa)) +
   theme_void() +
-  scale_fill_manual(
-    values = c("gray", "plum", "orchid"),
+  scale_fill_brewer(
+    # values = c("gray", "thistle", "plum", "orchid"),
+    palette = "BuPu",
     na.value = "WhiteSmoke",
-    labels = c("0-4.9 pts",
+    labels = c("no difference",
+    "<5 pts",
                "5-9.9 pts",
                "10-15 pts")
   ) +
-  scale_color_manual(
-    values = c("darkorchid"),
-    na.value = "lightgray",
-    labels = c("p<0.05"),
-    breaks = levels(as.factor(africa$p_0_05))
-  ) +
   labs(fill = "Use difference",
        color = "",
-       title = "Crude difference in % of nets used between textiles") +
+       title = "Crude difference in % of nets used between textiles",
+       caption = "Data source: most recent DHS, MIS, MICS") +
   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
 
 m5pt
@@ -95,25 +93,177 @@ m5pt
 ```
 
 ``` {r map_sigmultivar}
-mmv <- ggplot(africa) +
-  geom_sf(data = africa, aes(fill = factor(melogit_p_value<0.05)),
-          color = "lightgray") +
-  coord_sf(crs = st_crs(africa)) +
+aft <- africa %>%
+  mutate(
+    aor_for_textile = if_else(is.na(p_0_05_aor), 1, aor_for_textile),
+    aor_for_textile = ifelse(is.na(country), NA, aor_for_textile),
+    melogit_aor = if_else(
+      is.na(melogit_star),
+      1,
+      note_aor_is_controlling_for_net_supply_region_ses_residence_month
+    )
+  )
+
+ggplot(aft) +
+  geom_sf(data = aft, aes(fill = aor_for_textile), color = "lightgray") +
+  coord_sf(crs = st_crs(aft)) +
   theme_void() +
-  scale_fill_manual(values = c("gray","steelblue"),
-                    na.value = "WhiteSmoke",
-                    labels = c("No",
-                               "Yes")) +
-  labs(fill = "",
-       title = "Textile significantly correlated with use in multivariate model"
-       ) +
+  scale_fill_gradient2(
+    low = "lightcoral",
+    mid = "ghostwhite",
+    high = "lightblue",
+    midpoint = 1.0,
+    na.value = "WhiteSmoke"
+  ) +
+  annotate(
+    "text",
+    x = 1900000,
+    y = 2700000,
+    label = "Polyester more \nlikely to be used",
+    size = 2.5,
+    color = "lightcoral",
+    fontface = "bold"
+  ) +
+  annotate(
+    "text",
+    x = -3000000,
+    y = -700000,
+    label = "Polyethylene more \nlikely to be used",
+    size = 2.5,
+    color = "cadetblue",
+    fontface = "bold"
+  ) +
+  annotate(
+    "text",
+    x = -2500000,
+    y = -2750000,
+    label = "No correlation",
+    size = 2.5,
+    color = "#696969",
+    fontface = "bold"
+  ) +
+  # geom_curve(aes(x = -2000000, y = -2500000, xend = -100000, yend = -500000),
+  #   arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+  #   color = "grey", curvature = 0.3) +
+  geom_curve(
+    aes(
+      x = -2000000,
+      y = -2500000,
+      xend = -1400000,
+      yend = -1500000
+    ),
+    arrow = arrow(length = unit(0.08, "inch")),
+    size = 0.5,
+    color = "grey",
+    curvature = -0.3
+  ) +
+  geom_curve(
+    aes(
+      x = 1000000,
+      y = 2700000,
+      xend = -250000,
+      yend = 2500000
+    ),
+    arrow = arrow(length = unit(0.08, "inch")),
+    size = 0.5,
+    color = "lightcoral",
+    curvature = 0.3
+  ) +
+  geom_curve(
+    aes(
+      x = -4000000,
+      y = -300000,
+      xend = -4000000,
+      yend = 1250000
+    ),
+    arrow = arrow(length = unit(0.08, "inch")),
+    size = 0.5,
+    color = "cadetblue",
+    curvature = -0.3
+  ) +
+  labs(
+    fill = "Adjusted odds ratio",
+    title = "Multivariate model",
+    subtitle = "Correlation of textile with use: \nadjusted for household supply of nets, net age, region, \nwealth, urban/rural, net age, and month",
+    caption = "Data source: most recent DHS, MIS, MICS."
+  ) +
   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
-mmv
+
+
+    # title = "Textile significantly correlated with use in multivariate model"
+# ggsave("multivarsignif_map.png")
+```
+
+``` {r map_sigmelogit}
+# mel <- ggplot(africa) +
+#   geom_sf(data = africa, aes(fill = factor(melogit_p_value<0.05)),
+#           color = "lightgray") +
+#   coord_sf(crs = st_crs(africa)) +
+#   theme_void() +
+#   scale_fill_manual(values = c("gray","steelblue"),
+#                     na.value = "WhiteSmoke",
+#                     labels = c("No",
+#                                "Yes")) +
+#   labs(fill = "",
+#        title = "Multilevel mixed-effects logistic regression model",
+#        subtitle = "Textile significantly correlated with use, \nadjusted for household supply of nets, region, wealth, urban/rural, and month",
+#        caption = "Data source: most recent DHS, MIS, MICS") +
+#   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
+# mel
 # title = "Textile significantly correlated with use in multivariate model"
 # ggsave("multivarsignif_map.png")
 ```
 
+``` {r map_melogit2}
+# Mixed effects results - not weighted for surveys! accounts for clustering within the cluster but not at household level.
+
+# 
+# mel2 <- ggplot(aft) +
+#   geom_sf(data = aft, aes(fill = melogit_aor),
+#           color = "lightgray") +
+#   coord_sf(crs = st_crs(aft)) +
+#   theme_void() +
+#   scale_fill_gradient2(
+#     low = "lightcoral",
+#     mid = "ghostwhite",
+#     high = "lightblue",
+#     midpoint = 1.0,
+#     na.value = "WhiteSmoke"
+#   ) +
+#   labs(fill = "",
+#        title = "Multilevel mixed-effects logistic regression model",
+#        subtitle = "Textile significantly correlated with use, \nadjusted for household supply of nets, net age, region, wealth, urban/rural, and month",
+#        caption = "Data source: most recent DHS, MIS, MICS") +
+#   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
+# mel2
+
+```
+
 ```{r twomaps}
 # plot_grid(m5pt, mmv, labels = c('A', 'B'), label_size = 12)
+```
+
+```{r}
+
+# 
+# 
+# test <- ggplot(africa) +
+#   geom_sf(
+#     data = africa, aes(color = factor(p_0_05_aor))) +
+#       coord_sf(crs = st_crs(africa)) +
+#       theme_void() +
+#     scale_color_manual(
+#         values = c("red"),
+#         na.value = "white",
+#         labels = c("p<0.05"),
+#         breaks = levels(as.factor(africa$p_0_05_aor))
+#       ) +
+#       labs(
+#         fill = "Adjusted odds of polyethylene net being used (vs polyester)",
+#         color = "",
+#         title = "Textile significantly correlated with use in multivariate model"
+#       ) +
+#       theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
+# test
 ```
 
