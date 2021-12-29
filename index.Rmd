@@ -3,10 +3,21 @@ title: "ITN Textile vs ITN Use"
 description: |
   Does the textile of an ITN make a difference in the overall use rate?
 site: distill::distill_website
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(maptools)
+library(maps)
+library(broom)
+library(spData)
+library(sf)
+library(cowplot)
 ```
 
 This website provides [reports](docs/reports.html) for countries in sub-Saharan Africa to evaluate whether there are differences in use of insecticide-treated nets (ITNs) due to the textile of ITNs (i.e. polyester or polyethylene).
@@ -16,3 +27,93 @@ Some countries may wish to procure ITNs of a particular textile. These reports u
 These [reports](docs/reports.html) walk through several key questions to ask as we consider this question and provide recommendations for next steps.
 
 This work is supported by the Alliance for Malaria Prevention with funding from The Bill & Melinda Gates Foundation.
+
+```{r read}
+# read in data, tag most recent survey per country, clean country names for joining
+df <- read_excel("/Users/hannahkoenker/Dropbox/A DHS MIS Datasets/Analysis/Textile/textile_use_m.xlsx") %>% 
+  clean_names() %>% 
+  mutate(diffuse=abs(percent_of_polyester_nets_used - percent_of_polyethylene_nets_used),
+         country = str_replace_all(country, "[:digit:]", ""),
+         country = str_replace_all(country, " -", ""),
+         country = str_trim(country)) %>% 
+  group_by(country) %>%
+  slice(which.max(year)) %>% 
+  mutate(diff5 = if_else(diffuse>5,">5 points difference","<=5 points difference"),
+         country = case_when(
+           country == "GuineaBissau" ~ "Guinea-Bissau",
+           country == "Gambia" ~ "The Gambia",
+           country == "Congo" ~ "Republic of Congo",
+           country == "DRC" ~ "Democratic Republic of the Congo",
+           country == "CAR" ~ "Central African Republic",
+           TRUE ~ as.character(country)
+         ),
+         diff = cut(diffuse,breaks=c(0,5,10,15,Inf)),
+         name = country)
+```
+
+```{r worldmap}
+africa = world %>% 
+  filter(continent == "Africa", !is.na(iso_a2)) %>% 
+  left_join(worldbank_df, by = "iso_a2") %>% 
+  dplyr::select(name, subregion) %>% 
+  left_join(df, by="name") %>% 
+  st_transform("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25")
+
+```
+
+```{r make_sf}
+crs_africa <-  st_crs(africa)
+```
+
+``` {r map_5ptsdiff}
+m5pt <- ggplot(africa) +
+  geom_sf(data = africa, aes(fill = factor(diff),
+                             color = factor(p_0_05))) +
+  coord_sf(crs = st_crs(africa)) +
+  theme_void() +
+  scale_fill_manual(
+    values = c("gray", "plum", "orchid"),
+    na.value = "WhiteSmoke",
+    labels = c("0-4.9 pts",
+               "5-9.9 pts",
+               "10-15 pts")
+  ) +
+  scale_color_manual(
+    values = c("darkorchid"),
+    na.value = "lightgray",
+    labels = c("p<0.05"),
+    breaks = levels(as.factor(africa$p_0_05))
+  ) +
+  labs(fill = "Use difference",
+       color = "",
+       title = "Crude difference in % of nets used between textiles") +
+  theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
+
+m5pt
+# 
+# ggsave("diff5points_map.png")
+```
+
+``` {r map_sigmultivar}
+mmv <- ggplot(africa) +
+  geom_sf(data = africa, aes(fill = factor(melogit_p_value<0.05)),
+          color = "lightgray") +
+  coord_sf(crs = st_crs(africa)) +
+  theme_void() +
+  scale_fill_manual(values = c("gray","steelblue"),
+                    na.value = "WhiteSmoke",
+                    labels = c("No",
+                               "Yes")) +
+  labs(fill = "",
+       title = "Textile significantly correlated with use in multivariate model"
+       ) +
+  theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
+mmv
+# title = "Textile significantly correlated with use in multivariate model"
+# ggsave("multivarsignif_map.png")
+```
+
+```{r twomaps}
+# plot_grid(m5pt, mmv, labels = c('A', 'B'), label_size = 12)
+```
+
