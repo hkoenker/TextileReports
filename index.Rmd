@@ -363,3 +363,5 @@ ggplot(aft) +
 # test
 ```
 
+<h2>Meta analysis across multiple surveys and countries</h2>
+![Figure 5: Forest Plot](images/_textileforestplot.png)
