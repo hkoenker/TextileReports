@@ -20,11 +20,11 @@ library(sf)
 library(cowplot)
 ```
 
-This website provides [reports](docs/reports.html) for countries in sub-Saharan Africa to evaluate whether there are differences in use of insecticide-treated nets (ITNs) due to the textile of ITNs (i.e. polyester or polyethylene).
+This website provides [reports](reports.html) for countries in sub-Saharan Africa to evaluate whether there are differences in use of insecticide-treated nets (ITNs) due to the textile of ITNs (i.e. polyester or polyethylene).
 
 Some countries may wish to procure ITNs of a particular textile. These reports use large household survey data to evaluate whether there are differences in use between polyester and polyethylene nets in a particular country, and whether net textile is associated with these differences after controlling for other determinants of net use.
 
-These [reports](docs/reports.html) walk through several key questions to ask as we consider this question and provide recommendations for next steps.
+These [reports](reports.html) walk through several key questions to ask as we consider this question and provide recommendations for next steps.
 
 This work is supported by the Alliance for Malaria Prevention with funding from The Bill & Melinda Gates Foundation.
 
