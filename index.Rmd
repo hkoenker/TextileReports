@@ -68,7 +68,10 @@ crs_africa <-  st_crs(africa)
 ```
 
 <h1>Summary</h1>
-Data from the most recent MIS, DHS, and MICS were obtained with permission from dhsprogram.com and mics.unicef.org. We plot several maps below of relevant indicators. Figure \@ref(fig:usediff) presents the crude (absolute) difference between the proportion of polyester nets used the previous night and the proportion of polyethylene nets used the previous night. In nearly all cases this difference is less than 10 percentage points and the majority of recent surveys show no significant difference in the overall use rate of nets of different textiles.
+Data from the most recent MIS, DHS, and MICS were obtained with permission from dhsprogram.com and mics.unicef.org. We plot several maps below of relevant indicators. 
+
+<h2>How big are the differences in use between PE and PET nets?</h2>
+Figure \@ref(fig:usediff) presents the crude (absolute) difference between the proportion of polyester nets used the previous night and the proportion of polyethylene nets used the previous night. In nearly all cases this difference is less than 10 percentage points and the majority of recent surveys show no significant difference in the overall use rate of nets of different textiles.
 
 ``` {r usediff, layout="l-body-outset", fig.cap = "Crude difference in % of nets used between textiles", fig.topcaption=TRUE}
 ggplot(africa) +
@@ -93,7 +96,9 @@ ggplot(africa) +
 
 ```
 
-Figure \@ref(fig:sigmultivar) summarizes countries where the most recent survey shows a correlation between the textile of a net and whether it was used the previous night. In most countries, textile is not significantly correlated with use when controlling for other factors.
+<h2>Is textile an important predictor of net use after controlling for other factors?</h2>
+
+Figure \@ref(fig:sigmultivar) summarizes countries where the most recent survey shows a correlation between the textile of a net and whether it was used the previous night. In most countries, textile is not significantly correlated with use when controlling for other key factors, such as the household's net supply (# of nets and # of family members), the month of the survey (seasonality), region, urban/rural, and wealth quintile.
 
 ``` {r sigmultivar, layout="l-body-outset", fig.cap = "Correlation of textile with use: adjusted for household supply of nets, net age, region, wealth, urban/rural, net age, and month", fig.topcaption=TRUE}
 aft <- africa %>%
@@ -197,6 +202,8 @@ ggplot(aft) +
 # Note: Previously, because 'month' variable was extended in Stata's models and not in the R models, there was a signal change for Burkina Faso and for Chad. This was fixed Jan 4 2021.
 ```
 
+<h2>How complete is the information we have for net textile in these surveys?</h2>
+
 The textile is determined from the brand information collected in the survey; in some surveys the proportion of nets with an unknown brand can be considerable. Figure \@ref(fig:txtunknown) summarizes the proportion of nets with an unknown brand and thus an unknown textile. This provides important context when interpreting results above.
 
 ```{r txtunknown, layout="l-body-outset", fig.cap = "Proportion of nets with unknown brand & textile", fig.topcaption=TRUE}
@@ -222,7 +229,9 @@ ggplot(aft) +
   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
 ```
 
-Figure \@ref(fig:polyester) illustrates the distribution of textiles within countries - darker reds indicate a high proportion of polyethylene nets, and darker blues indicate majority polyester nets at the time of the most recent survey.
+<h2>Do countries have primarily one type of net, or a mix?</h2>
+
+Figure \@ref(fig:polyester) illustrates the relative share of polyester and polyethylene nets within countries - darker reds indicate a high proportion of polyethylene nets, and darker blues indicate majority polyester nets. It's important to keep in mind this is from the time of the most recent survey; the picture may be different if the survey has a high percentage of nets with an unknown brand (see above), and if a country has conducted a mass campaign since the survey.
 
 ```{r polyester, layout="l-body-outset", fig.cap = "Proportion of nets that are polyester", fig.topcaption=TRUE}
 ggplot(aft) +
@@ -362,7 +371,10 @@ ggplot(aft) +
 # test
 ```
 
-<h2>Meta analysis across multiple surveys and countries</h2>
+<h2>Meta analysis across countries</h2>
+
+This forest plot summarizes the regression results for all available surveys, restricted to the most recent survey for each country. The bottom line shows that overall, polyethylene nets are only slightly less likely to be used the night before compared to polyester nets (adjusted odds ratio: 0.94, 95% CI 0.89-0.98) when controlling for background factors.
+
 ```{r, layout="l-body-outset", fig.cap = "Forest Plot summarizing odds of a PE net being used; most recent survey per country", fig.topcaption=TRUE}
 include_graphics("images/_textileforestplot.png")
 ```

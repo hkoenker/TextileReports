@@ -2414,7 +2414,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <h1>
 Summary
 </h1>
-<p>Data from the most recent MIS, DHS, and MICS were obtained with permission from dhsprogram.com and mics.unicef.org. We plot several maps below of relevant indicators. Figure <a href="#fig:usediff">1</a> presents the crude (absolute) difference between the proportion of polyester nets used the previous night and the proportion of polyethylene nets used the previous night. In nearly all cases this difference is less than 10 percentage points and the majority of recent surveys show no significant difference in the overall use rate of nets of different textiles.</p>
+<p>Data from the most recent MIS, DHS, and MICS were obtained with permission from dhsprogram.com and mics.unicef.org. We plot several maps below of relevant indicators.</p>
+<h2>
+How big are the differences in use between PE and PET nets?
+</h2>
+<p>Figure <a href="#fig:usediff">1</a> presents the crude (absolute) difference between the proportion of polyester nets used the previous night and the proportion of polyethylene nets used the previous night. In nearly all cases this difference is less than 10 percentage points and the majority of recent surveys show no significant difference in the overall use rate of nets of different textiles.</p>
 <div class="layout-chunk" data-layout="l-body-outset">
 <div class="figure"><span style="display:block;" id="fig:usediff"></span>
 <p class="caption">
@@ -2423,7 +2427,10 @@ Figure 1: Crude difference in % of nets used between textiles
 <img src="index_files/figure-html5/usediff-1.png" alt="Crude difference in % of nets used between textiles" width="624" />
 </div>
 </div>
-<p>Figure <a href="#fig:sigmultivar">2</a> summarizes countries where the most recent survey shows a correlation between the textile of a net and whether it was used the previous night. In most countries, textile is not significantly correlated with use when controlling for other factors.</p>
+<h2>
+Is textile an important predictor of net use after controlling for other factors?
+</h2>
+<p>Figure <a href="#fig:sigmultivar">2</a> summarizes countries where the most recent survey shows a correlation between the textile of a net and whether it was used the previous night. In most countries, textile is not significantly correlated with use when controlling for other key factors, such as the household’s net supply (# of nets and # of family members), the month of the survey (seasonality), region, urban/rural, and wealth quintile.</p>
 <div class="layout-chunk" data-layout="l-body-outset">
 <div class="figure"><span style="display:block;" id="fig:sigmultivar"></span>
 <p class="caption">
@@ -2432,6 +2439,9 @@ Figure 2: Correlation of textile with use: adjusted for household supply of nets
 <img src="index_files/figure-html5/sigmultivar-1.png" alt="Correlation of textile with use: adjusted for household supply of nets, net age, region, wealth, urban/rural, net age, and month" width="624" />
 </div>
 </div>
+<h2>
+How complete is the information we have for net textile in these surveys?
+</h2>
 <p>The textile is determined from the brand information collected in the survey; in some surveys the proportion of nets with an unknown brand can be considerable. Figure <a href="#fig:txtunknown">3</a> summarizes the proportion of nets with an unknown brand and thus an unknown textile. This provides important context when interpreting results above.</p>
 <div class="layout-chunk" data-layout="l-body-outset">
 <div class="figure"><span style="display:block;" id="fig:txtunknown"></span>
@@ -2441,7 +2451,10 @@ Figure 3: Proportion of nets with unknown brand &amp; textile
 <img src="index_files/figure-html5/txtunknown-1.png" alt="Proportion of nets with unknown brand &amp; textile" width="624" />
 </div>
 </div>
-<p>Figure <a href="#fig:polyester">4</a> illustrates the distribution of textiles within countries - darker reds indicate a high proportion of polyethylene nets, and darker blues indicate majority polyester nets at the time of the most recent survey.</p>
+<h2>
+Do countries have primarily one type of net, or a mix?
+</h2>
+<p>Figure <a href="#fig:polyester">4</a> illustrates the relative share of polyester and polyethylene nets within countries - darker reds indicate a high proportion of polyethylene nets, and darker blues indicate majority polyester nets. It’s important to keep in mind this is from the time of the most recent survey; the picture may be different if the survey has a high percentage of nets with an unknown brand (see above), and if a country has conducted a mass campaign since the survey.</p>
 <div class="layout-chunk" data-layout="l-body-outset">
 <div class="figure"><span style="display:block;" id="fig:polyester"></span>
 <p class="caption">
@@ -2463,8 +2476,9 @@ Figure 4: Proportion of nets that are polyester
 
 </div>
 <h2>
-Meta analysis across multiple surveys and countries
+Meta analysis across countries
 </h2>
+<p>This forest plot summarizes the regression results for all available surveys, restricted to the most recent survey for each country. The bottom line shows that overall, polyethylene nets are only slightly less likely to be used the night before compared to polyester nets (adjusted odds ratio: 0.94, 95% CI 0.89-0.98) when controlling for background factors.</p>
 <div class="layout-chunk" data-layout="l-body-outset">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
 <p class="caption">
