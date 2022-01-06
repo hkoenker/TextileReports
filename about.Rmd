@@ -7,7 +7,7 @@ description: |
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-This site was built by Hannah Koenker, Technical Director at Tropical Health. Both Stata and R were used for analysis and presentation of the findings. 
+This site was built by Hannah Koenker, Technical Director at Tropical Health. Both Stata and R were used for analysis and presentation of the findings. Feedback and questions are welcome! You can reach me at hannah AT trophealth DOT com.
 
 <h1>Methods</h1>
 Publicly available datasets were downloaded from dhsprogram.com and mics.unicef.org. Appropriate survey weights were applied using the "svy" command in Stata and the "survey" package in R. Regression results for the maps on the homepage were run with the svy: logistic command in Stata; those in the reports were run with the svyglm command in R, using a quasi-binomial specification.
