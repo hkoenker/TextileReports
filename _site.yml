@@ -12,4 +12,6 @@ navbar:
       href: about.html
     - text: "Reports"
       href: reports.html
+    - text: "Preferences"
+      href: prefs.html
 output: distill::distill_article

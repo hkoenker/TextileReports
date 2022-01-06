@@ -1,0 +1,331 @@
+---
+title: "Textile Preferences"
+description: |
+  Do textile preferences make a difference in whether nets are used? <br>  Last update: `r format(Sys.time(), '%d %B, %Y')`
+site: distill::distill_website
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(haven)
+library(labelled)
+library(knitr)
+library(readxl)
+library(janitor)
+library(maptools)
+library(maps)
+library(broom)
+library(spData)
+library(sf)
+library(cowplot)
+library(survey)
+library(gtsummary)
+```
+
+A very limited number of surveys ask questions about the preferred textile for ITNs. These include Madagascar 2016, Liberia 2016, Sierra Leone 2016, and Rwanda 2017. (A 2013 survey in Madagascar also contains this question but is not included here). With the data about respondent preferences, we can assess whether textile preference is associated with whether a particular net is used the night before the survey.
+
+<h1>How the question is asked is important</h1>
+While all surveys included a "Don't know" option for the question about textile preferences, only Liberia and Madagascar included an option for "no preference" in their survey questionnaires. We recommend that future surveys include an option for "no preference" when asking about preferences for net attributes (textile, color, shape, etc), as it provides an important indication of the strength of these preferences. Expressing a preference for a certain material does not necessarily mean that individuals will not use nets of the other material, as the rest of this website shows.
+
+In Rwanda, the question about the preferred material was asked for each net in the household. Of the 4205 households in the survey, only 32 households reported different preferences for the nets within their household; the rest (99.3%) had consistent preferences for one type or the other. The data shown here has collapsed these preferences from the net level to the household level so that the unit of analysis for all four surveys is the household. In the future we would recommend that surveys ask the preference questions at the household level, not the net level, as the net-level question does not provide any additional insights.
+
+<h1>What are the textile preferences in each country?</h1>
+
+```{r SL}
+SL <- read_dta("/Users/hannahkoenker/Dropbox/R Directory/Textile Preferences/hh_dta/SLHR71_hhtext.dta") %>% 
+  clean_names() %>% 
+  mutate_if(haven::is.labelled, haven::as_factor)
+# SL <- svydesign(ids=~hv001, weights=~hv005, strata=~hv024, data = SL)
+
+LB <- read_dta("/Users/hannahkoenker/Dropbox/R Directory/Textile Preferences/hh_dta/LBHR70_hhtext.dta") %>% 
+  clean_names() %>% 
+  mutate_if(haven::is.labelled, haven::as_factor)
+# LB <- svydesign(ids=~hv001, weights=~hv005, strata=~hv024, data = LB)
+
+MG <- read_dta("/Users/hannahkoenker/Dropbox/R Directory/Textile Preferences/hh_dta/MDHR71_hhtext.dta") %>% 
+  clean_names() %>% 
+  mutate_if(haven::is.labelled, haven::as_factor)
+# MG <- svydesign(ids=~hv001, weights=~hv005, strata=~hv024, data = MG)
+
+RW <- read_dta("/Users/hannahkoenker/Dropbox/R Directory/Textile Preferences/hh_dta/RWHR7A_hhtext.dta") %>% 
+  clean_names() %>% 
+  mutate_if(haven::is.labelled, haven::as_factor)
+# RW <- svydesign(ids=~hv001, weights=~hv005, strata=~hv024, data = RW)
+```
+
+```{r palette}
+textpal <- c("Soft / polyester" = "#a6cee3", "Hard / polyethylene" = "#1f78b4", "No preference" = "ghostwhite", "Don't know" = "#A9A9A9")
+
+```
+
+```{r prefbyfun}
+prefby <- function(column, df) {
+  column <- sym(column)
+  df %>%
+    group_by(!!column) %>%
+    ggplot(aes(x = !!column,
+               fill = preftex)) +
+    geom_bar(position = "fill") +
+    coord_flip() +
+    scale_fill_manual(values = textpal, na.value = "#A9A9A9") +
+    labs(
+      y =  "",
+      x =  "",
+      fill =  "",
+      title =  ""
+    ) +
+    theme_minimal() +
+    theme(axis.text.x=element_text(size=rel(0.7))) +
+        guides(shape = guide_legend(override.aes = list(size = .5)),
+               color = guide_legend(override.aes = list(size = .5))) +
+        theme(legend.title = element_text(size = 8), 
+              legend.text  = element_text(size = 8),
+              legend.key.size = unit(0.4, "cm"))
+}
+
+```
+
+Preferences tend to vary by wealth quintile, so let's take a look at preferences for net textile for each country, stratifying by wealth quintile. Sierra Leone and Liberia look similar, with most respondents preferring polyester nets, highest for respondents in the richest quintiles. In Madagascar, around half of respondents had no preference, and most of the rest preferring polyester, with some small differences by wealth quintile. In Rwanda, the majority prefer polyethylene nets: from about half of all poorest households, to over 80% of the richest households. 
+
+``` {r sespref, layout="l-body-outset", fig.cap = "Reported preferences for net material by wealth quintile", fig.topcaption=TRUE}
+s1 <- prefby("hv270", SL) +
+  labs(title = "Sierra Leone 2016")
+s2 <- prefby("hv270", LB)+
+  labs(title = "Liberia 2016")
+s3 <- prefby("hv270", MG)+
+  labs(title = "Madagascar 2016")
+s4 <- prefby("hv270", RW)+
+  labs(title = "Rwanda 2017")
+
+plot_grid(s1, s2, s3, s4)
+```
+    
+We see a similar pattern when stratifying by urban/rural residence. Sierra Leone and Liberia have more preference for polyester in urban areas, and slightly less in rural. Urban areas in Rwanda prefer polyethylene to a greater degree than rural areas. 
+
+Keep in mind that those in the richer wealth quintiles and/or urban areas tend to have access to more options for acquiring nets, and may have more agency to act on their preferences for certain net types. Households in rural areas and those in the lower wealth quintiles have limited options for acting on their preferences, and thus may feel they have to make do with whatever options are available. 
+
+```{r urbpref, layout="l-body-outset", fig.cap = "Reported preferences for net material by residence", fig.topcaption=TRUE}
+u1 <- prefby("hv025", SL) +
+  labs(title = "Sierra Leone 2016")
+u2 <- prefby("hv025", LB)+
+  labs(title = "Liberia 2016")
+u3 <- prefby("hv025", MG)+
+  labs(title = "Madagascar 2016")
+u4 <- prefby("hv025", RW)+
+  labs(title = "Rwanda 2017")
+
+plot_grid(u1, u2, u3, u4)
+```
+
+
+
+```{r cleanupfun}
+cleanup <- function(data) {
+  data %>% 
+       drop_na(netused, netsupply, ispreftextile) %>% 
+  subset(ispreftextile!=2) %>% 
+  # change 1: convert haven_labelled variables to factors ----
+   mutate_if(haven::is.labelled, haven::as_factor) %>% 
+  mutate(netu = as.numeric(netused),
+         netu = netu-1,
+         region = as.numeric(region),
+         preference = ispreftextile)
+}
+```
+
+```{r read}
+mada <- read_dta("/Users/hannahkoenker/Dropbox/A DHS MIS Datasets/Analysis/Textile/MDHR71_texprefs.dta") %>% 
+    clean_names() %>%
+  select(hv001, hhid, hv005, month, hv007, hv012, region, residence, ses, netsupply, dataset, survey_type, country, seen, netagegr, netused, numusers, textile, ownbothtxt, wt, cluster, preftex, ispreftextile, prefcat, preferssoft) 
+mada <- cleanup(mada)
+var_label(mada$netagegr) <-  "Net age (months)"  
+
+
+lib <- read_dta("/Users/hannahkoenker/Dropbox/A DHS MIS Datasets/Analysis/Textile/LBHR70_texprefs.dta") %>% 
+    clean_names() %>%
+  select(hv001, hhid, hv005, month, hv007, hv012, region, residence, ses, netsupply, dataset, survey_type, country, seen, netagegr, netused, numusers, textile, ownbothtxt, wt, cluster, preftex, ispreftextile, prefcat, preferssoft) %>% 
+   drop_na(netused, netsupply, ispreftextile) 
+
+lib <- cleanup(lib)
+var_label(lib$netagegr) <-  "Net age (months)" 
+
+sl <- read_dta("/Users/hannahkoenker/Dropbox/A DHS MIS Datasets/Analysis/Textile/SLHR71_texprefs.dta") %>% 
+    clean_names() %>%
+  select(hv001, hhid, hv005, month, hv007, hv012, region, residence, ses, netsupply, dataset, survey_type, country, seen, netagegr, netused, numusers, textile, ownbothtxt, wt, cluster, preftex, ispreftextile, prefcat, preferssoft) %>% 
+   drop_na(netused, netsupply, ispreftextile) %>% 
+  mutate(country = "Sierra Leone")
+
+sl <- cleanup(sl)
+var_label(sl$netagegr) <-  "Net age (months)" 
+
+rwa <- read_dta("/Users/hannahkoenker/Dropbox/A DHS MIS Datasets/Analysis/Textile/RWHR7A_texprefs.dta") %>% 
+    clean_names() %>%
+  select(hv001, hhid, hv005, month, hv007, hv012, region, residence, ses, netsupply, dataset, survey_type, country, seen, netagegr, netused, numusers, textile, ownbothtxt, wt, cluster, preftexn, ispreftextile, prefcat, preferssoft) %>% 
+   drop_na(netused, netsupply, ispreftextile) 
+
+rwa <- cleanup(rwa)
+var_label(rwa$netagegr) <-  "Net age (months)" 
+```
+
+```{r worldmap}
+# africa = world %>% 
+#   filter(continent == "Africa", !is.na(iso_a2)) %>% 
+#   left_join(worldbank_df, by = "iso_a2") %>% 
+#   dplyr::select(name, subregion) %>% 
+#   left_join(prefs, by="name") %>% 
+#   st_transform("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25")
+
+```
+
+<h1>Are the current nets the preferred textile?</h1>
+
+```{r append}
+allnets <- mada %>% 
+  bind_rows(sl, lib, rwa) %>% 
+  select(country, dataset, prefcat)
+```
+
+We can see in the graph below that in Madagascar, the majority of nets during the 2017 survey were the preferred textile, and that in Sierra Leone and Liberia, around half of all nets were the preferred textile. Slightly less than half of all nets in Rwanda 2017 were the preferred textile.
+
+```{r allprefcat2, layout="l-body-outset", fig.cap = "Proportion of nets that are the household's preferred textile", fig.topcaption=TRUE}
+allnets %>% 
+  mutate(prefcat2 = case_when(
+    prefcat=="Preferred polyester" ~ "Preferred",
+    prefcat=="Preferred polyethylene" ~ "Preferred",
+    prefcat=="Not preferred polyester" ~ "Not preferred",
+    prefcat=="Not preferred polyethylene" ~ "Not preferred"
+  )) %>% 
+  mutate(prefcat2 = fct_relevel(prefcat2, 
+            "Preferred", "Not preferred")) %>%
+  ggplot(aes(x = country,
+               fill = prefcat2)) +
+    geom_bar(position = "fill") +
+    # geom_text(aes(label = percent), 
+    #     position = position_stack(vjust = 0.5)) +
+    coord_flip() +
+  theme_minimal() +
+  # scale_fill_brewer(palette = "Set2") +
+  # scale_fill_manual(values = c("#FC8D62", "#66C2A5")) + # reverse Set2
+  scale_fill_manual(values = c("#63A3CC", "#FE9F38")) + #halfway colors between the Paired colors used in next graph
+  labs(x = "",
+       y = "",
+       fill = "",
+       title = "Percent of nets that are the household's preferred textile")
+```
+
+We can break this chart down further into specific categories for preferred and not-preferred nets of the two textiles. In Rwanda 2017, the preferred nets were split more or less evenly between the two textile types, although we can still see in the light orange bar that the majority of nets were polyester nets owned by households that would have preferred polyethylene.
+
+```{r allprefcats, layout="l-body-outset", fig.cap = "Proportion of nets that are the household's preferred textile, by type", fig.topcaption=TRUE}
+allnets %>% 
+  mutate(prefcat2 = case_when(
+    prefcat=="Preferred polyester" ~ "Preferred",
+    prefcat=="Preferred polyethylene" ~ "Preferred",
+    prefcat=="Not preferred polyester" ~ "Not preferred",
+    prefcat=="Not preferred polyethylene" ~ "Not preferred"
+  )) %>% 
+    mutate(prefcat = fct_relevel(prefcat, 
+            "Preferred polyester", "Preferred polyethylene", "Not preferred polyester", 
+            "Not preferred polyethylene")) %>%
+  ggplot(aes(x = country,
+               fill = prefcat)) +
+    geom_bar(position = "fill") +
+    # geom_text(aes(label = percent), 
+    #     position = position_stack(vjust = 0.5)) +
+    coord_flip() +
+  theme_minimal() +
+  # scale_fill_brewer(palette = "Paired") +
+    # scale_fill_manual(values = c("lightblue", "#1F78B4", "#fb9a99", "#e31a1c")) + # blue and red
+  scale_fill_manual(values = c("lightblue", "#1F78B4", "#FDBF6F", "#FF7F00")) + #blue and orange
+  labs(x = "",
+       y = "",
+       fill = "",
+       title = "Percent of nets that are the household's preferred textile")
+```
+
+```{r prefcatfun}
+# prefcatfun <- function(df) {
+#   df %>% 
+#     mutate(prefcat2 = case_when(
+#     prefcat=="Preferred polyester" ~ "Preferred",
+#     prefcat=="Preferred polyethylene" ~ "Preferred",
+#     prefcat=="Not preferred polyester" ~ "Not preferred",
+#     prefcat=="Not preferred polyethylene" ~ "Not preferred"
+#   )) %>% 
+#     mutate(prefcat = fct_relevel(prefcat, 
+#             "Preferred polyester", "Preferred polyethylene", "Not preferred polyester", 
+#             "Not preferred polyethylene")) %>%
+#   ggplot(aes(x = country,
+#                fill = prefcat)) +
+#     geom_bar(position = "fill") +
+#     # geom_text(aes(label = percent), 
+#     #     position = position_stack(vjust = 0.5)) +
+#     coord_flip() +
+#   theme_minimal() +
+#   # scale_fill_brewer(palette = "Paired") +
+#     scale_fill_manual(values = c("lightblue", "#1F78B4", "#fb9a99", "#e31a1c")) +
+#   labs(x = "",
+#        y = "",
+#        fill = "")
+# }
+```
+
+```{r prefcat}
+# p1 <- prefcatfun(sl)
+# p2 <- prefcatfun(lib)
+# p3 <- prefcatfun(mada)
+# p4 <- prefcatfun(rwa)
+# 
+# plot_grid(p1, p2, p3, p4)
+```
+
+<h1>Regression models - is preference associated with net use?</h1>
+```{r models}
+svymada <- svydesign(ids=~cluster, weights=~wt, strata=~region, data = mada)
+m1 <- svyglm(netused ~ preference + netsupply + month + region + residence + ses + netagegr, design=svymada, family = quasibinomial)
+
+svylib <- svydesign(ids=~cluster, weights=~wt, strata=~region, data = lib)
+m2 <- svyglm(netused ~ preference + netsupply + month + region + residence + ses + netagegr, design=svylib, family = quasibinomial)
+
+svysl <- svydesign(ids=~cluster, weights=~wt, strata=~region, data = sl)
+m3 <- svyglm(netused ~ preference + netsupply + month + region + residence + ses + netagegr, design=svysl, family = quasibinomial)
+
+svyrwa <- svydesign(ids=~cluster, weights=~wt, strata=~region, data = rwa)
+m4 <- svyglm(netused ~ preference + netsupply + month + region + residence + ses + netagegr, design=svyrwa, family = quasibinomial)
+
+# summary(m1)$coefficients
+```
+
+``` {r maketablefunction}
+## Table for one model
+maketable <-  function(model) {
+  model %>%
+    tbl_regression(exponentiate = TRUE, label = netagegr ~ "net age (months)") %>%
+    bold_p(t = 0.05) %>%
+    bold_labels() %>%
+    italicize_levels()
+}
+```
+
+```{r maketables}
+t1 <- maketable(m1)
+t2 <- maketable(m2)
+t3 <- maketable(m3)
+t4 <- maketable(m4)
+```
+
+The below table summarizes the results of generalized linear models to assess the associations between textile preference and the likelihood of a net being used the previous night. We have created a variable from the reported preference and the textile of the net - a binary variable indicating whether a net in the household is the preferred textile or not. Only in Liberia 2016 is this variable significantly associated with the odds of a net being used the previous night - nets of the preferred textile were 1.39 times more likely to have been used than those that were not the preferred textile, controlling for the other factors in the model. 
+
+The model also shows us that the household net supply - whether they have not enough nets, the right number of nets (at least 1 per 2 people, but less than one net per person), or 'too many' nets (1 per person or more) is strongly associated with the likelihood of net use in all models. 
+
+```{r mergetables, layout="l-body-outset", tab.cap = "Multiple linear regression model - outcome is whether the net was used the previous night", tab.topcaption=TRUE}
+# merge tables 
+theme_gtsummary_compact()
+  tbl_merge(
+    tbls = list(t1, t2, t3, t4),
+    tab_spanner = c("**Madagascar 2016**", "**Liberia 2016**", "**Sierra Leone 2016**", "**Rwanda 2017**")
+  )
+```
+
