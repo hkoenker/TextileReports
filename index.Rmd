@@ -27,6 +27,8 @@ Some countries may wish to procure ITNs of a particular textile. These reports u
 
 These [reports](reports.html) walk through several key questions to ask as we consider this question and provide recommendations for next steps.
 
+In four countries, surveys have collected information on household preferences for net textile. This data is summarized on the [Preferences](prefs.html) page.
+
 This work is supported by the Alliance for Malaria Prevention with funding from The Bill & Melinda Gates Foundation.
 
 ```{r read}
