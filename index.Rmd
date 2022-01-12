@@ -125,6 +125,7 @@ Data from the most recent MIS, DHS, and MICS were obtained with permission from 
   
 
 <h2>1. How big are the differences in use between PE and PET nets?</h2>
+
 Figure \@ref(fig:usediff) presents the crude (absolute) difference between the proportion of polyester nets used the previous night and the proportion of polyethylene nets used the previous night. In nearly all cases this difference is less than 10 percentage points and the majority of recent surveys show no significant difference in the overall use rate of nets of different textiles.
 
 
