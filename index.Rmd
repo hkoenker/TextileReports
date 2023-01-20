@@ -142,8 +142,9 @@ ggplot(africa) +
     na.value = "WhiteSmoke",
     labels = c("no difference",
     "<5 pts",
-               "5-9.9 pts",
-               "10-15 pts")
+               "5-9.9 pts")
+    # ,
+    #            "10-15 pts")
   ) +
   labs(fill = "Use difference",
        color = "",
