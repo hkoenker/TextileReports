@@ -181,8 +181,8 @@ ggplot(africa) +
   ) +
   annotate(
     "text",
-    x = -3000000,
-    y = -700000,
+    x = 2000000,
+    y = -900000,
     label = "Polyethylene more \nlikely to be used",
     size = 2.5,
     color = "lightcoral",
@@ -223,10 +223,10 @@ ggplot(africa) +
   ) +
   geom_curve(
     aes(
-      x = -4000000,
-      y = -300000,
-      xend = -4100000,
-      yend = 1100000
+      x = 1000000,
+      y = -900000,
+      xend = 600000,
+      yend = -400000
     ),
     arrow = arrow(length = unit(0.08, "inch")),
     size = 0.5,
@@ -250,7 +250,7 @@ ggplot(africa) +
 
 <h2>3. Are the findings above consistent?</h2>
 
-The results from Figures 1 and 2 can frequently be contradictory. A country like DRC shows a crude difference in the percent of nets used of between 5-10 percentage points - but textile is not a significant predictor of use in the multivariate regression model. Conversely, Senegal has no difference in the crude use rate for nets of different textile, but when controlling for background factors, textile is significantly associated with use. The map below summarizes which countries have these 'inconclusive' findings, and for which countries both the crude use rate differences and the model results are telling the same story. In these countries, further exploration is warranted. 
+The results from Figures 1 and 2 can frequently be contradictory. A country like DRC shows a crude difference in the percent of nets used of between 5-10 percentage points - but textile is not a significant predictor of use in the multivariate regression model. Conversely, Togo has no difference in the crude use rate for nets of different textile, but when controlling for background factors, textile is significantly associated with use. The map below summarizes which countries have these 'inconclusive' findings, and for which countries both the crude use rate differences and the model results are telling the same story. In these countries, further exploration is warranted. 
 
 ``` {r justifmap, layout="l-body-outset", fig.cap = "Crude and adjusted results", fig.topcaption=TRUE}
 ggplot(africa) +
@@ -461,6 +461,41 @@ spgn <- download_boundaries(surveyId = gn$SurveyId[1], method = "sf")
 
 ```
 
+``` {r guinea21}
+gn21 <- dhs_data(countryIds = "GN",
+              indicatorIds = "FE_FRTR_W_A15",
+              surveyYearStart = 2021,
+              breakdown = "subnational") %>% 
+  mutate(region = base::iconv (CharacteristicLabel, to="ASCII//TRANSLIT"),
+         region = gsub("'", '', region),
+         region = tolower(region))
+
+
+# get our related spatial data frame object
+spgn21 <- download_boundaries(surveyId = gn21$SurveyId[1], method = "sf")
+# gnshp<-list.files("rdhs/gn_subnational_boundaries_2022-01-11/shps/", pattern = ".shp$",full.names=TRUE)
+
+```
+
+``` {r mali}
+ml <- dhs_data(countryIds = "ML",
+              indicatorIds = "ML_NETP_H_MOS",
+              surveyYearStart = 2021,
+              breakdown = "subnational") %>% 
+  mutate(region = base::iconv (CharacteristicLabel, to="ASCII//TRANSLIT"),
+         region = gsub("'", '', region),
+         region = tolower(region)) %>% 
+  filter(region %in% c("..kayes","..koulikoro","..sikasso","..segou","..mopti","....tombouctou","....gao","....kidal","bamako")) %>% 
+  mutate(region = gsub("[..]","",region))
+
+
+# get our related spatial data frame object
+spml <- download_boundaries(surveyId = ml$SurveyId[1], method = "sf")
+# gnshp<-list.files("rdhs/gn_subnational_boundaries_2022-01-11/shps/", pattern = ".shp$",full.names=TRUE)
+
+```
+
+
 ``` {r rwanda}
 rw <- dhs_data(countryIds = "RW",
               indicatorIds = "FE_FRTR_W_A15",
@@ -487,9 +522,23 @@ sprw <- download_boundaries(surveyId = rw$SurveyId[1], method = "sf")
 
 
 ```{r regjoins}
-gn <- reg %>% 
-  filter(datafile=="GNHR71") %>% 
-  left_join(gn, by = "region") %>% 
+gn <- reg %>%
+  filter(datafile=="GNHR71") %>%
+  left_join(gn, by = "region") %>%
+  mutate(diffuse = (percent_of_polyester_nets_used-percent_of_polyethylene_nets_used),
+         diffuse2 = ifelse(p_value_crudeuse < 0.05, diffuse, NA),
+         diff = if_else(p_value_crudeuse > 0.05, -1, diffuse),
+    diff = cut(diff, breaks = c(-2, 0, 5, 10, 15, Inf)),
+    diff = fct_recode(diff, "no difference" = "(-2,0]",
+                      "<5 pts" = "(0,5]",
+                      "5-9.9 pts" = "(5,10]",
+                      "10-15 pts" = "(10,15]",
+                      "15+ pts" = "(15,Inf]"),
+    aor = ifelse(pval_aor < 0.05, aor_for_textile, NA))
+
+gn21 <- reg %>%
+  filter(datafile=="GNHR81") %>%
+  left_join(gn21, by = "region") %>%
   mutate(diffuse = (percent_of_polyester_nets_used-percent_of_polyethylene_nets_used),
          diffuse2 = ifelse(p_value_crudeuse < 0.05, diffuse, NA),
          diff = if_else(p_value_crudeuse > 0.05, -1, diffuse),
@@ -504,6 +553,20 @@ gn <- reg %>%
 lb <- reg %>% 
   filter(datafile=="LBHR7A") %>% 
   left_join(lb, by = "region") %>% 
+  mutate(diffuse = (percent_of_polyester_nets_used-percent_of_polyethylene_nets_used),
+         diffuse2 = ifelse(p_value_crudeuse < 0.05, diffuse, NA),
+         diff = if_else(p_value_crudeuse > 0.05, -1, diffuse),
+    diff = cut(diff, breaks = c(-2, 0, 5, 10, 15, Inf)),
+    diff = fct_recode(diff, "no difference" = "(-2,0]",
+                      "<5 pts" = "(0,5]",
+                      "5-9.9 pts" = "(5,10]",
+                      "10-15 pts" = "(10,15]",
+                      "15+ pts" = "(15,Inf]"),
+    aor = ifelse(pval_aor <0.05,aor_for_textile,NA))
+
+ml <- reg %>% 
+  filter(datafile=="MLHR81") %>% 
+  left_join(ml, by = "region") %>% 
   mutate(diffuse = (percent_of_polyester_nets_used-percent_of_polyethylene_nets_used),
          diffuse2 = ifelse(p_value_crudeuse < 0.05, diffuse, NA),
          diff = if_else(p_value_crudeuse > 0.05, -1, diffuse),
@@ -554,8 +617,14 @@ spbf$sdr_subnational_boundaries$diff <- mbf
 mlb <- lb$diff[match(splb$sdr_subnational_boundaries$REG_ID, lb$RegionId)]
 splb$sdr_subnational_boundaries$diff <- mlb
 
+mml <- ml$diff[match(spml$sdr_subnational_boundaries$REG_ID, ml$RegionId)]
+spml$sdr_subnational_boundaries$diff <- mml
+
 mgn <- gn$diff[match(spgn$sdr_subnational_boundaries$REG_ID, gn$RegionId)]
 spgn$sdr_subnational_boundaries$diff <- mgn
+
+mgn21 <- gn21$diff[match(spgn21$sdr_subnational_boundaries$REG_ID, gn21$RegionId)]
+spgn21$sdr_subnational_boundaries$diff <- mgn21
 
 mrw <- rw$diff[match(sprw$sdr_subnational_boundaries$REG_ID, rw$RegionId)]
 sprw$sdr_subnational_boundaries$diff <- mrw
@@ -566,8 +635,14 @@ spbf$sdr_subnational_boundaries$diffuse2 <- mbf
 mlb <- lb$diffuse2[match(splb$sdr_subnational_boundaries$REG_ID, lb$RegionId)]
 splb$sdr_subnational_boundaries$diffuse2 <- mlb
 
+mml <- ml$diffuse2[match(spml$sdr_subnational_boundaries$REG_ID, ml$RegionId)]
+spml$sdr_subnational_boundaries$diffuse2 <- mml
+
 mgn <- gn$diffuse2[match(spgn$sdr_subnational_boundaries$REG_ID, gn$RegionId)]
 spgn$sdr_subnational_boundaries$diffuse2 <- mgn
+
+mgn21 <- gn21$diffuse2[match(spgn21$sdr_subnational_boundaries$REG_ID, gn21$RegionId)]
+spgn21$sdr_subnational_boundaries$diffuse2 <- mgn21
 
 mrw <- rw$diffuse2[match(sprw$sdr_subnational_boundaries$REG_ID, rw$RegionId)]
 sprw$sdr_subnational_boundaries$diffuse2 <- mrw
@@ -578,8 +653,14 @@ spbf$sdr_subnational_boundaries$aor <- mbf
 mlb <- lb$aor[match(splb$sdr_subnational_boundaries$REG_ID, lb$RegionId)]
 splb$sdr_subnational_boundaries$aor <- mlb
 
+mml <- ml$aor[match(spml$sdr_subnational_boundaries$REG_ID, ml$RegionId)]
+spml$sdr_subnational_boundaries$aor <- mml
+
 mgn <- gn$aor[match(spgn$sdr_subnational_boundaries$REG_ID, gn$RegionId)]
 spgn$sdr_subnational_boundaries$aor <- mgn
+
+mgn21 <- gn21$aor[match(spgn21$sdr_subnational_boundaries$REG_ID, gn21$RegionId)]
+spgn21$sdr_subnational_boundaries$aor <- mgn21
 
 mrw <- rw$aor[match(sprw$sdr_subnational_boundaries$REG_ID, rw$RegionId)]
 sprw$sdr_subnational_boundaries$aor <- mrw
@@ -587,7 +668,7 @@ sprw$sdr_subnational_boundaries$aor <- mrw
 
 <h2>6. Watch out for in-country variation!</h2>
 
-The below graphs present data on the difference in the percent of nets used the previous night for regions within four of the five countries where both the crude use rate shows a sizeable difference between textiles, and the multivariate regression model indicates textile is significantly associated with use. We can see that large parts of Burkina Faso have no observable difference in use between textiles, while two regions are leaning towards polyester nets, contributing to the national results. For Guinea, the regions around Conakry have higher rates of use for polyethylene nets (red), while the reverse is true in the south-eastern regions. But remember that net age is not accounted for here - differences in use could be because certain regions of the country have newer nets of one type, and have discontinued use of older nets of the other type.
+The below graphs present data on the difference in the percent of nets used the previous night for regions within four countries where, in at least one survey, both the crude use rate shows a sizeable difference between textiles, and the multivariate regression model indicates textile is significantly associated with use. We can see that large parts of Burkina Faso have no observable difference in use between textiles, while two regions are leaning towards polyester nets, contributing to the national results. For Guinea, the regions around Conakry had higher rates of use for polyethylene nets (red) in the 2018 survey, but the 2021 survey had slightly different results, shown here. But remember that net age is not accounted for here - differences in use could be because certain regions of the country have newer nets of one type, and have discontinued use of older nets of the other type.
 
 ```{r regmapsdiffuse2, fig.cap="Regional maps of the crude difference in polyester vs polyethylene net use. Blue indicates more polyester nets are used than polyethylene nets; red indicates more polyethylene nets are used.", fig.topcaption=TRUE}
 
@@ -617,6 +698,20 @@ g2 <- ggplot(spgn$sdr_subnational_boundaries) +
     fill = "Use difference",
     color = "",
     title = "Guinea 2018",
+    caption = ""
+  ) +
+  theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
+
+g21 <- ggplot(spgn21$sdr_subnational_boundaries) +
+  geom_sf(aes(fill = diffuse2), color = "lightgray") +
+ theme_void() +
+   scale_fill_distiller(palette = "RdBu", direction = 1,
+    na.value = "whitesmoke",
+    limits = c(-35,35)) +
+  labs(
+    fill = "Use difference",
+    color = "",
+    title = "Guinea 2021",
     caption = ""
   ) +
   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
@@ -653,19 +748,34 @@ g4 <- ggplot(sprw$sdr_subnational_boundaries) +
   # geom_sf_label(aes(label = "REGNAME"), size=.5) +
   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
 
+g5 <- ggplot(spml$sdr_subnational_boundaries) +
+  geom_sf(aes(fill = diffuse2), color = "lightgray") +
+ theme_void() +
+ scale_fill_distiller(palette = "RdBu", direction = 1,
+    na.value = "whitesmoke",
+    limits = c(-35,35)) +
+  labs(
+    fill = "Use difference",
+    color = "",
+    title = "Mali 2021",
+    caption = ""
+  ) +
+  # geom_sf_label(aes(label = "REGNAME"), size=.5) +
+  theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
+
 text <- paste("Blue indicates polyester nets are used more;",
 "red indicates that polyethylene nets are used more", sep = "\n")
 
-g5 <- text_grob(text, just="center")
+gt <- text_grob(text, just="center")
 
-plot_grid(g1, g2, g3, g4)
+plot_grid(g1, g21, g3, g4)
 
 # gn %>% 
 #   ggplot(spgn$sdr_subnational_boundaries) +
 #   geom_sf(aes(fill = diff))
 ```
 
-The four maps below show the results of the multivariate model for each region. Blue regions are where polyethylene nets are less likely to be used (around half as likely in some regions of Burkina Faso and Liberia, compared to polyester), while red regions are where polyethylene nets are more likely to be used (up 2-3 times as likely in some parts of Guinea and Rwanda).
+The four maps below show the results of the multivariate model for each region. Blue regions are where polyethylene nets are less likely to be used (around half as likely in some regions of Burkina Faso, Guinea, and  Liberia, compared to polyester), while red regions are where polyethylene nets are more likely to be used (up 2-3 times as likely in some parts of Rwanda).
 
 ```{r regmapsaor, fig.cap="Regional maps of the coefficient for textile in the adjusted model at regional level. Blue indicates polyethylene nets are less likely to be used than polyester nets; red indicates a higher likelihood that polyethylene nets are used.", fig.topcaption=TRUE}
 
@@ -708,6 +818,24 @@ ga2 <- ggplot(spgn$sdr_subnational_boundaries) +
   ) +
   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
 
+ga21 <- ggplot(spgn21$sdr_subnational_boundaries) +
+  geom_sf(aes(fill = aor), color = "lightgray") +
+ theme_void() +
+    scale_fill_gradient2(
+    low = "lightblue",
+    mid = "ghostwhite",
+    high = "lightcoral",
+    midpoint = 1.0,
+    limits = c(0,3),
+    na.value = "WhiteSmoke"
+  ) +
+  labs(
+    fill = "Adjusted Odds Ratio",
+    color = "",
+    title = "Guinea 2021",
+    caption = ""
+  ) +
+  theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
 
 ga3 <- ggplot(splb$sdr_subnational_boundaries) +
   geom_sf(aes(fill = aor), color = "lightgray") +
@@ -749,7 +877,26 @@ ga4 <- ggplot(sprw$sdr_subnational_boundaries) +
   ) +
   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
 
-plot_grid(ga1, ga2, ga3, ga4)
+ga5 <- ggplot(spml$sdr_subnational_boundaries) +
+  geom_sf(aes(fill = aor), color = "lightgray") +
+ theme_void() +
+ scale_fill_gradient2(
+    low = "lightblue",
+    mid = "ghostwhite",
+    high = "lightcoral",
+    midpoint = 1.0,
+   limits = c(0,3),
+    na.value = "WhiteSmoke"
+  ) +
+  labs(
+    fill = "Adjusted Odds Ratio",
+    color = "",
+    title = "Mali 2021",
+    caption = ""
+  ) +
+  theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
+
+plot_grid(ga1, ga21, ga3, ga4)
 
 # gn %>% 
 #   ggplot(spgn$sdr_subnational_boundaries) +
@@ -762,7 +909,7 @@ plot_grid(ga1, ga2, ga3, ga4)
 
 <h2>7. Meta analysis across countries</h2>
 
-This forest plot summarizes the regression results for all available surveys, restricted to the most recent survey for each country. The bottom line shows that overall, polyethylene nets are only slightly less likely to be used the night before compared to polyester nets (adjusted odds ratio: 0.94, 95% CI 0.89-0.98) when controlling for background factors.
+This forest plot summarizes the regression results for all available surveys, restricted to the most recent survey for each country. The bottom line shows that overall, polyethylene nets are only slightly less likely to be used the night before compared to polyester nets (adjusted odds ratio: 0.93, 95% CI 0.8-0.99) when controlling for background factors.
 
 ```{r, layout="l-body-outset", fig.cap = "Forest Plot summarizing odds of a PE net being used; most recent survey per country", fig.topcaption=TRUE}
 include_graphics("images/_textileforestplot.png")
