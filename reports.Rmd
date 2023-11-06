@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 - [Angola](files/Angola_Textile_Report.html)
 - [Benin](files/Benin_Textile_Report.html)
-- [Burkina Faso](files/Burkina Faso 2022_Textile_Report.html)
+- [Burkina Faso](files/Burkina Faso_Textile_Report.html)
 - [Burundi](files/Burundi_Textile_Report.html)
 - [Cameroon](files/Cameroon_Textile_Report.html)
 - [Central African Republic](files/Central African Republic_Textile_Report.html)
