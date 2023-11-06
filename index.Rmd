@@ -833,6 +833,8 @@ g6 <- ggplot(sptz$sdr_subnational_boundaries2) +
   # geom_sf_label(aes(label = "REGNAME"), size=.5) +
   theme(plot.margin = grid::unit(c(0, 0, 0, 0), "null"))
 
+ggsave(plot=g6, "images/tz_crude_use_textile_2022.png")
+
 text <- paste("Blue indicates polyester nets are used more;",
 "red indicates that polyethylene nets are used more", sep = "\n")
 
@@ -988,7 +990,7 @@ ga6 <- ggplot(sptz$sdr_subnational_boundaries2) +
 # plot_grid(ga1, ga21, ga3, ga4, ga5, ga6)
 ggarrange(ga1, ga21, ga3, ga4, ga5, ga6, common.legend = TRUE)
 
-
+ggsave(plot=ga6, "images/tz_aor_textile_2022.png")
 ```
 
 ```{r}
