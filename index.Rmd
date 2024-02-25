@@ -417,6 +417,24 @@ ggplot(africa) +
 reg <- read_excel("/Users/hannahkoenker/Dropbox/A DHS MIS Datasets/Analysis/Textile/reg_textile_use.xlsx"
   ) %>%
   clean_names()
+
+# Test Plot of nets seen/observed
+# reg %>% 
+#   ggplot() +
+#   geom_jitter(aes(x=year, y=percent_nets_seen, color=type_of_survey)) +
+#   labs(x="",
+#        y="Percent of nets seen",
+#        color="") +
+#   theme_classic()
+# 
+# reg %>% 
+#   ggplot() +
+#   geom_boxplot(aes(x=year, y=percent_nets_seen, color=type_of_survey)) +
+#   labs(x="",
+#        y="Percent of nets seen",
+#        color="",
+#        title="Percent of nets observed in MIS/DHS surveys") +
+#   theme_classic()
 ```
 
 ```{r burkina}
